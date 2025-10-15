@@ -13788,6 +13788,11 @@ PrefabInstance:
       propertyPath: m_Shadows.m_Type
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8132999732107002625, guid: 51bd9d5004648ca48b235b88b95b5e19,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8141826661651877438, guid: 51bd9d5004648ca48b235b88b95b5e19,
         type: 3}
       propertyPath: m_Name
@@ -24166,7 +24171,7 @@ Transform:
   m_GameObject: {fileID: 1395115221}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.5559269, y: 0.87, z: -4.790457}
+  m_LocalPosition: {x: -31.872099, y: -2.17764, z: -26.610622}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -30649,7 +30654,7 @@ Transform:
   m_GameObject: {fileID: 1787388880}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -28.27, y: -2.4, z: -28.22}
+  m_LocalPosition: {x: -25.45, y: -2.4, z: -28.22}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -31086,7 +31091,7 @@ Transform:
   m_GameObject: {fileID: 1811505148}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -43.54, y: 1.437, z: -28.22}
+  m_LocalPosition: {x: -43.54, y: 1.9, z: -28.22}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -34168,7 +34173,7 @@ Transform:
   m_GameObject: {fileID: 2030480963}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7.39, y: 1.437, z: 7.41}
+  m_LocalPosition: {x: -1.76, y: 1.437, z: 7.41}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -35201,6 +35206,11 @@ PrefabInstance:
     - target: {fileID: 6932480039033313411, guid: d7893ed7f3d54c146b7537a073225cec,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7690680499918651192, guid: d7893ed7f3d54c146b7537a073225cec,
+        type: 3}
+      propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Threading.Tasks;
+using UnityEngine.EventSystems;
+using System.Linq;
 
 public class MonsterController : MonoBehaviour
 {
@@ -40,6 +42,8 @@ public class MonsterController : MonoBehaviour
         while (runMonsterCycle == true)
         {
 
+            if (curNode != null) Debug.Log(curNode.name);
+           
             List<List<GameObject>> possibleMovePoints = new List<List<GameObject>>();//saves as full paths, so each internal list is a list of nodes that make up a path
             //List<GameObject> bypassNodesToHit = new List<GameObject>();
             for (int i = 0; i < nodes.Count; i++)
@@ -58,6 +62,7 @@ public class MonsterController : MonoBehaviour
                     RaycastHit hit;
                     if (!Physics.Linecast(passbackNode.transform.position, tNode.transform.position, out hit))
                     {
+                        Debug.Log("aaaa");
                         break;
                     }
                     if (hit.transform.gameObject == tNode && hit.collider.gameObject.CompareTag("StopNode"))
@@ -67,7 +72,7 @@ public class MonsterController : MonoBehaviour
                             possibleMovePoints.Add(new List<GameObject>());
                         }
                         fT = false;
-                        Debug.Log("Stop");
+                        //Debug.Log("Stop");
                         possibleMovePoints[possibleMovePoints.Count - 1].Add(hit.transform.gameObject);
                         passbackNode = null;
                     }
@@ -79,30 +84,37 @@ public class MonsterController : MonoBehaviour
                         }
                         fT = false;
                         internalPrevNode = hit.transform.gameObject;
-                        Debug.Log("Bypass");
+                        //Debug.Log("Bypass");
                         possibleMovePoints[possibleMovePoints.Count - 1].Add(hit.transform.gameObject);
                         passbackNode = hit.transform.gameObject;
                         //looking for another bypass node
-                        bool suc = false;
                         for (int j = 0; j < nodes.Count; j++)
                         {
-                            RaycastHit internalHit;
-                            if (!Physics.Linecast(passbackNode.transform.position, nodes[j].transform.position, out internalHit))
+                            if (nodes[j] == curNode) continue;
+                            RaycastHit secondaryHit;
+                            if (Physics.Linecast(passbackNode.transform.position, nodes[j].transform.position, out secondaryHit))
                             {
+
+                                //Debug.Log("L1");
+                                if ((secondaryHit.transform.gameObject.CompareTag("BypassNode") || secondaryHit.transform.gameObject.CompareTag("StopNode")) && !possibleMovePoints[possibleMovePoints.Count - 1].Contains(secondaryHit.transform.gameObject))
+                                {
+                                    //Debug.Log("L2");
+                                    tNode = secondaryHit.transform.gameObject;
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                tNode = null;
                                 continue;
                             }
-                            Debug.Log(possibleMovePoints[possibleMovePoints.Count - 1].Contains(internalHit.transform.gameObject));
-                            if ((internalHit.collider.gameObject.CompareTag("StopNode") | internalHit.collider.gameObject.CompareTag("BypassNode")) && internalHit.transform.gameObject != curNode && !possibleMovePoints[possibleMovePoints.Count - 1].Contains(internalHit.transform.gameObject))//fix here
-                            {
-                                suc = true; 
-                                tNode = internalHit.transform.gameObject;
-                            }
-                            
                         }
-                        if(suc == false)
+                        if(tNode == null)
                         {
-                            tNode = null;
+                            Debug.Log("Removing...");
+                            possibleMovePoints.RemoveAt(possibleMovePoints.Count - 1);
                         }
+                       
                     }
                     else
                     {
@@ -114,8 +126,12 @@ public class MonsterController : MonoBehaviour
             }
 
 
-            if (possibleMovePoints.Count == 0) Debug.Log("Twin something not working");
-
+            if (possibleMovePoints.Count == 0)
+            {
+                Debug.Log("Twin something not working");
+                await Task.Delay(1000);
+                continue;
+            }
             await Task.Delay(rand.Next(5000, 10000));
 
 
