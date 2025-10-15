@@ -40,30 +40,31 @@ public class MonsterController : MonoBehaviour
         {
 
             List<GameObject> possibleMovePoints = new List<GameObject>();
+            List<GameObject> bypassNodesToHit = new List<GameObject>();
             for (int i = 0; i < nodes.Count; i++)
             {
-                GameObject passbackNode = nodes[i];
+                GameObject passbackNode = monsterBody;
                 while (passbackNode != null)
                 {
                     RaycastHit hit;
-
-                    if (!Physics.Linecast(passbackNode.transform.position, nodes[i].transform.position, out hit)) continue;
-                    
-                    
-                    if (hit.transform.gameObject.CompareTag("StopNode"))
+                    if (!Physics.Linecast(passbackNode.transform.position, nodes[i].transform.position, out hit))
+                    {
+                        break;
+                    }
+                    if (hit.collider.gameObject.CompareTag("StopNode"))
                     {
                         Debug.Log("Stop");
                         possibleMovePoints.Add(nodes[i]);
                         passbackNode = null;
                     }
-                    else if (hit.transform.gameObject.CompareTag("BypassNode"))
+                    else if (hit.collider.gameObject.CompareTag("BypassNode"))
                     {
                         Debug.Log("Bypass");
-                        passbackNode = hit.transform.gameObject;
+                        passbackNode = hit.collider.gameObject;
                     }
                     else
                     {
-                        Debug.Log(hit.transform.gameObject.name);
+                        Debug.Log(hit.collider.gameObject.name);
                         passbackNode = null; //just in case
                     }
                 }
@@ -74,15 +75,15 @@ public class MonsterController : MonoBehaviour
 
             await Task.Delay(rand.Next(5000, 10000));
 
-            
+            //WIP !!!!!!!!!! CLEAR UP STUFF WITH THE BYPASS NODES SO THE MONSTER ACTUALLY FOLLOWS IT
 
-            Vector3 movePos = possibleMovePoints[rand.Next(0, possibleMovePoints.Count + 1)].transform.position;
+            Vector3 movePos = possibleMovePoints[rand.Next(0, possibleMovePoints.Count)].transform.position;
             Vector3 startPos = monsterBody.transform.position;
             
-            for (int i = 0; i < 1000; i++)
+            for (int i = 0; i < bypassNodesToHit.Count; i++)
             {
-                await Task.Delay(3);
-                monsterBody.transform.position = Vector3.Lerp(movePos, startPos, (float)i / 1000);
+                await Task.Delay(1);
+                monsterBody.transform.position = Vector3.Lerp(startPos, movePos, (float)i / 1000);
             }
         }
     }
