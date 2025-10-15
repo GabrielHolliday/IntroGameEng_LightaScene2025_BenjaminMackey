@@ -5,6 +5,7 @@ using System;
 using System.Threading.Tasks;
 using UnityEngine.EventSystems;
 using System.Linq;
+using Unity.Mathematics;
 
 public class MonsterController : MonoBehaviour
 {
@@ -13,7 +14,12 @@ public class MonsterController : MonoBehaviour
     static List<GameObject> nodes = new List<GameObject>();
     public bool runMonsterCycle = false;
     public GameObject plr;
+    public int monsterSpeed = 100;
     public GameObject monsterBody;
+
+    public LightController lightController;
+
+     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
@@ -142,19 +148,28 @@ public class MonsterController : MonoBehaviour
                 Debug.Log(chosenPath[i].name);
             }
             */
+
+            lightController.flickerAll();
+            Vector3 lalaLazyCoding = new Vector3(0,0,0);
             for (int i = 0; i < chosenPath.Count; i++)
             {
                 Vector3 endPos = chosenPath[i].transform.position;
                 Vector3 startPos = monsterBody.transform.position;
 
-                for (int j = 0; j < 1000/chosenPath.Count; j++) // change to use some kind of vector3.magnitude or something
+
+                int time = (int)(1000f  / monsterSpeed);
+            
+
+                for (int j = 0; j < time / chosenPath.Count; j++) // change to use some kind of vector3.magnitude or something
                 {
-                    monsterBody.transform.position = Vector3.Lerp(startPos, endPos, (float)j / (float)(1000/chosenPath.Count));
+                    monsterBody.transform.position = Vector3.Lerp(startPos, endPos, (float)j / (float)(time / chosenPath.Count));
                     await Task.Delay(1);
                 }
+                lalaLazyCoding = endPos;
             }
+            monsterBody.transform.position = lalaLazyCoding;
             curNode = chosenPath[chosenPath.Count - 1];
-
+            lightController.flickering = false;
             /*Vector3 movePos = possibleMovePoints[rand.Next(0, possibleMovePoints.Count)].transform.position;
             
             

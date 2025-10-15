@@ -411,7 +411,12 @@ public class PlayerController : MonoBehaviour
         if (Physics.Raycast(transform.position, Vector3.up, out hit, maxCheckDistance, playerLayerMask))
         {
             // We hit something, so calculate the maximum height the playe can stand
-
+            //weewooweewoo ben is here
+            //making an exception for the monster node move things
+            if(hit.transform.gameObject.CompareTag("BypassNode") | hit.transform.gameObject.CompareTag("StopNode"))
+            {
+                return int.MaxValue;
+            }
             // Subtract a small buffer to prevent clipping
             float maxHeight = hit.distance - 0.1f;
 

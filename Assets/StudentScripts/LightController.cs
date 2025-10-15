@@ -5,7 +5,7 @@ using System.Collections;
 using System.Threading.Tasks;
 using System;
 using Unity.Mathematics;
-public class NewMonoBehaviourScript : MonoBehaviour
+public class LightController : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public bool flickering = false;
@@ -61,11 +61,17 @@ public class NewMonoBehaviourScript : MonoBehaviour
         alreadyFlickering.Remove(light);
     }
     
-    private void flickerAll()
+    public async void flickerAll()
     {
+        flickering = true;
         while(flickering == true)
         {
-            
+            for (int i = 0; i < lights.Length; i++)
+            {
+                flicker(lights[i]);
+                await Task.Delay(3);
+            }
+            await Task.Delay(1000);
         }
         
     }
@@ -73,7 +79,7 @@ public class NewMonoBehaviourScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(rand.Next(0,999) >= 995)
+        if(rand.Next(0,999) >= 950)
         {
             flicker(lights[rand.Next(0, lights.Length - 1)]);
         }
