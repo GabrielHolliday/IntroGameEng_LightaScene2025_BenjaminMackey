@@ -5,6 +5,7 @@ public class SignalWaiter : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     static System.Random rand = new System.Random();
+    private sign
     void Start()
     {
         
