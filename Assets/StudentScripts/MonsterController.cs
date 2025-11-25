@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using UnityEngine.EventSystems;
 using System.Linq;
 using Unity.Mathematics;
+using System.Collections;
 
 public class MonsterController : MonoBehaviour
 {
@@ -17,7 +18,11 @@ public class MonsterController : MonoBehaviour
     public int monsterSpeed = 100;
     public GameObject monsterBody;
 
+    public MonsterJumpscarrer monsterJumpscarrer;
+
     public LightController lightController;
+
+    private Animator monsterAnimator;
 
      
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -37,12 +42,13 @@ public class MonsterController : MonoBehaviour
     }
     void Start()
     {
-        moveCycle();
+        monsterAnimator = transform.Find("MonsterBody").GetComponent<Animator>();
+        StartCoroutine( moveCycle());
        
     }
 
     static GameObject curNode = null;
-    private async void moveCycle()
+    private IEnumerator moveCycle()
     {
         runMonsterCycle = true;
         while (runMonsterCycle == true)
@@ -135,10 +141,10 @@ public class MonsterController : MonoBehaviour
             if (possibleMovePoints.Count == 0)
             {
                 Debug.Log("Twin something not working");
-                await Task.Delay(1000);
+                yield return new WaitForSeconds(1);
                 continue;
             }
-            await Task.Delay(rand.Next(5000, 10000));
+            yield return new WaitForSeconds(rand.Next(5, 10));
 
 
             List<GameObject> chosenPath = possibleMovePoints[rand.Next(0, possibleMovePoints.Count)];
@@ -149,7 +155,8 @@ public class MonsterController : MonoBehaviour
             }
             */
 
-            lightController.flickerAll();
+            StartCoroutine( lightController.flickerAll());
+            monsterAnimator.enabled = true;
             Vector3 lalaLazyCoding = new Vector3(0,0,0);
             for (int i = 0; i < chosenPath.Count; i++)
             {
@@ -157,19 +164,21 @@ public class MonsterController : MonoBehaviour
                 Vector3 startPos = monsterBody.transform.position;
 
 
-                int time = (int)(1000f  / monsterSpeed);
-            
+                //int time = (int)(1000f  / monsterSpeed);
+                float counter = 0f;
 
-                for (int j = 0; j < time / chosenPath.Count; j++) // change to use some kind of vector3.magnitude or something
+                while(counter < 1) // change to use some kind of vector3.magnitude or something
                 {
-                    monsterBody.transform.position = Vector3.Lerp(startPos, endPos, (float)j / (float)(time / chosenPath.Count));
-                    await Task.Delay(1);
+                    monsterBody.transform.position = Vector3.Lerp(startPos, endPos, Mathf.Clamp(counter, 0f,1f));
+                    counter += ((float)monsterSpeed * 0.1f) * Time.deltaTime;
+                    yield return new WaitForEndOfFrame();
                 }
                 lalaLazyCoding = endPos;
             }
             monsterBody.transform.position = lalaLazyCoding;
             curNode = chosenPath[chosenPath.Count - 1];
             lightController.flickering = false;
+            monsterAnimator.enabled = false;
             /*Vector3 movePos = possibleMovePoints[rand.Next(0, possibleMovePoints.Count)].transform.position;
             
             

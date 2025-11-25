@@ -46,13 +46,13 @@ public class LightController : MonoBehaviour
 
     private List<GameObject> alreadyFlickering = new List<GameObject>();
 
-    public async void flicker(GameObject light)
+    public IEnumerator flicker(GameObject light)
     {
-        if (alreadyFlickering.Contains(light)) return;
+        if (alreadyFlickering.Contains(light)) yield break;
         alreadyFlickering.Add(light);
         light.GetComponent<Animator>().enabled = true;
         light.GetComponent<Animator>().Play("Flicker");
-        await Task.Delay(1000);
+        yield return new WaitForSeconds(1);
         light.GetComponent<Animator>().enabled = false;
         if (light.transform.Find("CeilingLight ON"))
         {
@@ -61,17 +61,17 @@ public class LightController : MonoBehaviour
         alreadyFlickering.Remove(light);
     }
     
-    public async void flickerAll()
+    public IEnumerator flickerAll()
     {
         flickering = true;
         while(flickering == true)
         {
             for (int i = 0; i < lights.Length; i++)
             {
-                flicker(lights[i]);
-                await Task.Delay(3);
+                StartCoroutine( flicker(lights[i]));
+                yield return new WaitForSeconds(0.03f);
             }
-            await Task.Delay(1000);
+            yield return new WaitForSeconds(1f);
         }
         
     }
@@ -81,7 +81,7 @@ public class LightController : MonoBehaviour
     {
         if(rand.Next(0,999) >= 950)
         {
-            flicker(lights[rand.Next(0, lights.Length - 1)]);
+            StartCoroutine( flicker(lights[rand.Next(0, lights.Length - 1)]));
         }
         
     }
