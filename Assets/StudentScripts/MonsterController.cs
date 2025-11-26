@@ -23,6 +23,7 @@ public class MonsterController : MonoBehaviour
     public LightController lightController;
 
     private Animator monsterAnimator;
+  
 
      
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -190,7 +191,9 @@ public class MonsterController : MonoBehaviour
             */
         }
     }
+    private bool canJumpscare = true;
 
+    
 
     // Update is called once per frame
     void Update()
