@@ -1,10 +1,15 @@
+using System;
 using System.Collections;
 using System.Linq;
+using Mono.Cecil.Cil;
 using TMPro;
+using UnityEditor.SearchService;
 using UnityEngine;
 using UnityEngine.Playables;
+using UnityEngine.SceneManagement;
 using UnityEngine.Timeline;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class MonsterJumpscarrer : MonoBehaviour
 {
@@ -30,16 +35,26 @@ public class MonsterJumpscarrer : MonoBehaviour
         
     }
 
+  
+        
+    
+
     public IEnumerator Jumpscare()
     {
+        
         text.text = deathTexts[rand.Next(0, deathTexts.Length)];
-        Debug.Log("1");
+
         playableDirector.Play();
-        Debug.Log("2");
+
         yield return new WaitForSeconds(rand.Next(2, (int)markers[0].time));
-        Debug.Log("3");
+
         playableDirector.time = markers[0].time;
-        Debug.Log("4");
+
+        yield return new WaitForSeconds((float)playableDirector.duration - (float)markers[0].time);
+        Application.Quit();
+        
+        
+        
     }
     // Update is called once per frame
     void Update()
