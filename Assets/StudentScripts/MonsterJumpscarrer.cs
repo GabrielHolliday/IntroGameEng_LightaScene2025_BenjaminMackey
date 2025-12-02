@@ -1,15 +1,14 @@
-using System;
+
 using System.Collections;
 using System.Linq;
-using Mono.Cecil.Cil;
+
 using TMPro;
-using UnityEditor.SearchService;
+
 using UnityEngine;
 using UnityEngine.Playables;
-using UnityEngine.SceneManagement;
+
 using UnityEngine.Timeline;
-using UnityEngine.UI;
-using UnityEngine.UIElements;
+
 
 public class MonsterJumpscarrer : MonoBehaviour
 {
@@ -18,6 +17,8 @@ public class MonsterJumpscarrer : MonoBehaviour
     public GameObject monsterBody;
     public GameObject playerBody;
     public TMP_Text text;
+
+    public LightController lightController;
 
     private PlayableDirector playableDirector;
     private TimelineAsset timeline;
@@ -41,7 +42,7 @@ public class MonsterJumpscarrer : MonoBehaviour
 
     public IEnumerator Jumpscare()
     {
-        
+        lightController.TurnAllOff();
         text.text = deathTexts[rand.Next(0, deathTexts.Length)];
 
         playableDirector.Play();

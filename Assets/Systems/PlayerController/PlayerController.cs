@@ -413,7 +413,7 @@ public class PlayerController : MonoBehaviour
             // We hit something, so calculate the maximum height the playe can stand
             //weewooweewoo ben is here
             //making an exception for the monster node move things
-            if(hit.transform.gameObject.CompareTag("BypassNode") | hit.transform.gameObject.CompareTag("StopNode"))
+            if(hit.transform.gameObject.CompareTag("BypassNode") | hit.transform.gameObject.CompareTag("StopNode") |  hit.transform.gameObject.GetComponent<Collider>().isTrigger == true)
             {
                 return int.MaxValue;
             }

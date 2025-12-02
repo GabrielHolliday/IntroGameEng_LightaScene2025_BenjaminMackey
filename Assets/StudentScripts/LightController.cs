@@ -1,14 +1,15 @@
 using System.Collections.Generic;
-using JetBrains.Annotations;
+
 using UnityEngine;
 using System.Collections;
-using System.Threading.Tasks;
+
 using System;
-using Unity.Mathematics;
+
 public class LightController : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public bool flickering = false;
+    private bool forceOffFoeva = false;
 
     static System.Random rand = new System.Random();
 
@@ -59,6 +60,10 @@ public class LightController : MonoBehaviour
             light.transform.Find("CeilingLight ON").gameObject.SetActive(lightBaseState[Array.IndexOf<GameObject>(lights, light)]);
         }
         alreadyFlickering.Remove(light);
+        if(forceOffFoeva == true)
+        {
+            light.transform.Find("CeilingLight ON").gameObject.SetActive(false);
+        }
     }
     
     public IEnumerator flickerAll()
@@ -76,10 +81,25 @@ public class LightController : MonoBehaviour
         
     }
 
+    public void TurnAllOff()
+    {
+        forceOffFoeva = true;
+        for (int i = 0; i < lights.Length; i++)
+        {
+            lights[i].transform.Find("CeilingLight ON").gameObject.SetActive(false);
+            
+        }
+        for (int i = 0; i < lightBaseState.Count; i++)
+        {
+            lightBaseState[i] = false;
+        }
+        StartCoroutine(flickerAll());
+    }
+
     // Update is called once per frame
     void Update()
     {
-        if(rand.Next(0,999) >= 950)
+        if(rand.Next(0,999) >= 950 && forceOffFoeva == false)
         {
             StartCoroutine( flicker(lights[rand.Next(0, lights.Length - 1)]));
         }

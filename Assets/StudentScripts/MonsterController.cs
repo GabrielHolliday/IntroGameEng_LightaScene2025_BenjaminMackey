@@ -1,11 +1,7 @@
 using System.Collections.Generic;
 //using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using System;
-using System.Threading.Tasks;
-using UnityEngine.EventSystems;
-using System.Linq;
-using Unity.Mathematics;
+
 using System.Collections;
 
 public class MonsterController : MonoBehaviour
@@ -17,12 +13,14 @@ public class MonsterController : MonoBehaviour
     public GameObject plr;
     public int monsterSpeed = 100;
     public GameObject monsterBody;
+    public CollectibleManager collectibleManager;
 
     public MonsterJumpscarrer monsterJumpscarrer;
 
     public LightController lightController;
 
     private Animator monsterAnimator;
+    private AudioSource monsterMoveSound;
   
 
      
@@ -45,7 +43,7 @@ public class MonsterController : MonoBehaviour
     {
         monsterAnimator = transform.Find("MonsterBody").GetComponent<Animator>();
         StartCoroutine( moveCycle());
-       
+        monsterMoveSound = transform.Find("MonsterBody").transform.Find("MonsterMove").GetComponent<AudioSource>();
     }
 
     static GameObject curNode = null;
@@ -73,7 +71,9 @@ public class MonsterController : MonoBehaviour
                 {
                     emergencyCount++;
                     RaycastHit hit;
-                    if (!Physics.Linecast(passbackNode.transform.position, tNode.transform.position, out hit))
+                    int mask = ~(1 << 7 | 1<<3);
+                   
+                    if (!Physics.Linecast(passbackNode.transform.position, tNode.transform.position, out hit,mask))
                     {
                         Debug.Log("aaaa");
                         break;
@@ -145,7 +145,7 @@ public class MonsterController : MonoBehaviour
                 yield return new WaitForSeconds(1);
                 continue;
             }
-            yield return new WaitForSeconds(rand.Next(5, 10));
+            yield return new WaitForSeconds((1 - collectibleManager.collectedRatio) * 5);
 
 
             List<GameObject> chosenPath = possibleMovePoints[rand.Next(0, possibleMovePoints.Count)];
@@ -159,6 +159,7 @@ public class MonsterController : MonoBehaviour
             StartCoroutine( lightController.flickerAll());
             monsterAnimator.enabled = true;
             Vector3 lalaLazyCoding = new Vector3(0,0,0);
+            monsterMoveSound.Play();
             for (int i = 0; i < chosenPath.Count; i++)
             {
                 Vector3 endPos = chosenPath[i].transform.position;
@@ -168,14 +169,17 @@ public class MonsterController : MonoBehaviour
                 //int time = (int)(1000f  / monsterSpeed);
                 float counter = 0f;
 
+                float dist = Vector3.Distance(endPos, startPos);
+
                 while(counter < 1) // change to use some kind of vector3.magnitude or something
                 {
                     monsterBody.transform.position = Vector3.Lerp(startPos, endPos, Mathf.Clamp(counter, 0f,1f));
-                    counter += ((float)monsterSpeed * 0.1f) * Time.deltaTime;
+                    counter += ((float)monsterSpeed / dist) * Time.deltaTime;
                     yield return new WaitForEndOfFrame();
                 }
                 lalaLazyCoding = endPos;
             }
+            monsterMoveSound.Stop();
             monsterBody.transform.position = lalaLazyCoding;
             curNode = chosenPath[chosenPath.Count - 1];
             lightController.flickering = false;

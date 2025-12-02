@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using UnityEditor.Overlays;
+
 using UnityEngine;
 using UnityEngine.Playables;
 
@@ -7,6 +7,9 @@ public class TriggerManager : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public MonsterJumpscarrer jumpscarrer;
+    public GameObject monsterAppearEvent;
+    public GameObject flyByEvent;
+    public CollectibleManager collectibleManager;
 
     public GameObject overlay;
     public GameObject triggerParent;
@@ -25,8 +28,11 @@ public class TriggerManager : MonoBehaviour
 
 
 
-    private void OnCollisionEnter(Collision other)
+   
+    private void OnTriggerEnter(Collider other)
     {
+        
+        if(other.gameObject.CompareTag("Collectible")) collectibleManager.AllertCollected(other.transform.parent.gameObject);
         if(!triggers.Contains(other.gameObject)) return;
         Debug.Log(other.gameObject.name);
         triggers.Remove(other.gameObject);
@@ -34,31 +40,20 @@ public class TriggerManager : MonoBehaviour
         {
             case "Flashlight":
                 overlay.SetActive(true);
+                triggerParent.transform.Find("MonsterFlyBy").gameObject.SetActive(true);
                 overlay.GetComponent<PlayableDirector>().Play();
                 break;
-            case "BossEntr":
+            case "MonsterAppear":
+                monsterAppearEvent.SetActive(true);
                 break;
             case "MonsterBody":
                 StartCoroutine(jumpscarrer.Jumpscare());
                 break;
-        }
-    }
-    private void OnTriggerEnter(Collider other)
-    {
-        
-        if(!triggers.Contains(other.gameObject)) return;
-        Debug.Log(other.name);
-        triggers.Remove(other.gameObject);
-        switch(other.gameObject.name)
-        {
-            case "Flashlight":
-                overlay.SetActive(true);
-                overlay.GetComponent<PlayableDirector>().Play();
+            case "MonsterFlyBy":
+                flyByEvent.SetActive(true);
                 break;
-            case "BossEntr":
-                break;
-            case "MonsterBody":
-                StartCoroutine(jumpscarrer.Jumpscare());
+            case "Win":
+                StartCoroutine(collectibleManager.Win());
                 break;
         }
     }
